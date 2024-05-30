@@ -1,7 +1,7 @@
 # demo-static-analysis-python
 
 ## Setup
-Bootstrap the project
+Bootstrap the project!
 
 1. Create a virtual environment `python -mvenv venv`
 2. Use the virtual environment `source venv/bin/activate`
