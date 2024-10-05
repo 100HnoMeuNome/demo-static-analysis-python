@@ -1,10 +1,6 @@
+name: Code Security by DD
 on:
-  schedule:
-    # Run at every 11th minute of the hour, 11 can be any value.
-    - cron:  '11 * * * *'
-  workflow_dispatch:
   push:
-
 
 jobs:
   check-quality:
@@ -19,6 +15,19 @@ jobs:
         with:
           dd_app_key: ${{ secrets.DD_APP_KEY_DEMO_ORG }}
           dd_api_key: ${{ secrets.DD_API_KEY_DEMO_ORG }}
-          dd_service: "static-analysis-demo-python"
-          dd_env: "github"
           dd_site: "datadoghq.com"
+          
+  datadog-gate:
+    needs: check-quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install node
+        uses: actions/setup-node@v3
+      - run: yarn global add @datadog/datadog-ci
+      - run: >
+          DD_BETA_COMMANDS_ENABLED=true
+          DD_API_KEY=${{ secrets.DD_API_KEY }}
+          DD_APP_KEY=${{ secrets.DD_APP_KEY }}
+          DD_SITE="datadoghq.com"
+          datadog-ci gate evaluate
